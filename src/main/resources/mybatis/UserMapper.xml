@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.isoftstone.study.mapper.UserMapper">
+	
+	<resultMap type="com.isoftstone.study.domain.User" id="userMap">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="pass" property="pass" />
+		<result column="email" property="email" />
+		<result column="actived" property="actived" />
+	</resultMap>
+	
+	<!-- 新增构建主表，并新增构建明细 -->
+	<insert id="insertUser">
+		INSERT INTO 
+			user(id, name, pass, email, actived)
+			VALUES(#{id}, #{name}, #{pass}, #{email}, #{actived})
+	</insert>
+
+</mapper>
