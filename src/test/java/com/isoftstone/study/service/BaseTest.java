@@ -1,5 +1,7 @@
 package com.isoftstone.study.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.context.ApplicationContext;
@@ -11,6 +13,7 @@ import com.isoftstone.study.config.MybatisConfig;
 //@ContextConfiguration(classes=MybatisConfig.class)
 //@Import({ MybatisConfig.class })
 public class BaseTest {
+	protected final Log LOG = LogFactory.getLog(this.getClass());
 	private static ApplicationContext context;
 
 	@BeforeClass
@@ -18,9 +21,10 @@ public class BaseTest {
 		context = new AnnotationConfigApplicationContext(MybatisConfig.class);
 	}
 
-	public <T> T getService(Class<T> clazz){
+	public <T> T getService(Class<T> clazz) {
 		return context.getBean(clazz);
 	}
+
 	@AfterClass
 	public static void destory() {
 		if (context != null) {

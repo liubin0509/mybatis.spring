@@ -1,20 +1,98 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.isoftstone.study.mapper.UserMapper">
-	
 	<resultMap type="com.isoftstone.study.domain.User" id="userMap">
-		<result column="id" property="id" />
+		<id column="id" property="id" typeHandler="com.isoftstone.study.handler.UUIDTypeHandler" />
 		<result column="name" property="name" />
 		<result column="pass" property="pass" />
 		<result column="email" property="email" />
 		<result column="actived" property="actived" />
+		<result column="age" property="age" />
 	</resultMap>
-	
+	<parameterMap type="com.isoftstone.study.domain.ApiAdd" id="apiAddMap">
+		<parameter property="add1" jdbcType="INTEGER" mode="IN"/>  
+		<parameter property="add2" jdbcType="INTEGER" mode="IN"/>  
+		<parameter property="s" jdbcType="INTEGER" mode="OUT"/>
+	</parameterMap>
 	<!-- 新增构建主表，并新增构建明细 -->
 	<insert id="insertUser">
-		INSERT INTO 
-			user(id, name, pass, email, actived)
-			VALUES(#{id}, #{name}, #{pass}, #{email}, #{actived})
+		INSERT INTO
+		user(id, name, pass, email, actived, age)
+		VALUES(#{id}, #{name}, #{pass}, #{email}, #{actived}, #{age})
+	</insert>
+	<insert id="insertUsers">
+		INSERT INTO user (id, name, pass, email, actived, age)
+		VALUES
+		<foreach collection="users" item="item" index="index"
+			separator=",">
+			(#{item.id}, #{item.name}, #{item.pass}, #{item.email},
+			#{item.actived}, #{item.age})
+		</foreach>
 	</insert>
 
+	<select id="getUserById" resultMap="userMap" parameterType="java.util.UUID">
+		select
+		<include refid="allField" />
+		FROM user
+		where id = #{id}
+	</select>
+	<select id="queryUsers" resultMap="userMap">
+		select
+		<include refid="allField" />
+		FROM user
+		<where>
+			<if test="name != null">
+				and name = #{name}
+			</if>
+			<if test="email != null">
+				and email = #{email}
+			</if>
+		</where>
+	</select>
+	<select id="queryUsersByIds" resultMap="userMap">
+		select
+		<include refid="allField" />
+		FROM user
+		<where>
+			<if test="list != null and list.size() > 0">
+				id in
+				<foreach item="item" index="index" collection="list" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	<select id="queryUsersByUsers" resultMap="userMap">
+		select
+		<include refid="allField" />
+		FROM user
+		<where>
+			<if test="users != null and users.size() > 0">
+				(name, email) in
+				<foreach item="user" collection="users" open="(" separator=","
+					close=")">
+					(#{user.name},#{user.email})
+				</foreach>
+			</if>
+		</where>
+	</select>
+	<select id="queryUsersGroupByStatus" resultMap="userMap">
+		select
+		<include refid="allField" />
+		FROM user
+		where actived
+		<choose>
+			<when test="group == 1"> = #{group}</when>
+			<when test="group == 0"> = #{group}</when>
+			<otherwise>is null</otherwise>
+		</choose>
+	</select>
+	<select id="apiAdd" parameterMap="apiAddMap" statementType="CALLABLE">  
+		{call api_add(#{add1}, #{add2}, #{s,jdbcType=INTEGER,mode=OUT})}
+	</select>
+	<update id="apiAdd1" parameterMap="apiAddMap" statementType="CALLABLE">  
+		{call api_add(#{add1}, #{add2}, #{s,jdbcType=INTEGER,mode=OUT})}
+	</update> 
+	<sql id="allField">id, name, pass, email, actived, age</sql>
 </mapper>

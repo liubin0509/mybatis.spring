@@ -1,15 +1,21 @@
 package com.isoftstone.study.domain;
 
+import java.util.UUID;
+
 public class User {
-	private String id;
+	private UUID id;
 	private String name;
 	private transient String pass;
 	private String email;
 	private Boolean actived;
-	public String getId() {
+	private Integer age;
+	
+	private String group;
+	
+	public UUID getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 	public String getName() {
@@ -37,5 +43,16 @@ public class User {
 	public void setActived(Boolean actived) {
 		this.actived = actived;
 	}
-	
+	public Integer getAge() {
+		return age;
+	}
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+	public String getGroup() {
+		return group;
+	}
+	public void setGroup(String group) {
+		this.group = group;
+	}
 }
