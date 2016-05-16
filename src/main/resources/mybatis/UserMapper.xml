@@ -8,27 +8,43 @@
 		<result column="email" property="email" />
 		<result column="actived" property="actived" />
 		<result column="age" property="age" />
+		<result column="org_id" property="orgId" />
 	</resultMap>
 	<parameterMap type="com.isoftstone.study.domain.ApiAdd" id="apiAddMap">
 		<parameter property="add1" jdbcType="INTEGER" mode="IN"/>  
 		<parameter property="add2" jdbcType="INTEGER" mode="IN"/>  
 		<parameter property="s" jdbcType="INTEGER" mode="OUT"/>
 	</parameterMap>
-	<!-- 新增构建主表，并新增构建明细 -->
+	<sql id="allField">id, name, pass, email, actived, age, org_id</sql>
+	
 	<insert id="insertUser">
 		INSERT INTO
-		user(id, name, pass, email, actived, age)
-		VALUES(#{id}, #{name}, #{pass}, #{email}, #{actived}, #{age})
+		user(<include refid="allField" />)
+		VALUES(#{id}, #{name}, #{pass}, #{email}, #{actived}, #{age}, #{orgId})
 	</insert>
 	<insert id="insertUsers">
-		INSERT INTO user (id, name, pass, email, actived, age)
+		INSERT INTO user (<include refid="allField" />)
 		VALUES
 		<foreach collection="users" item="item" index="index"
 			separator=",">
-			(#{item.id}, #{item.name}, #{item.pass}, #{item.email},
-			#{item.actived}, #{item.age})
+			(#{item.id}, #{item.name}, #{item.pass}, #{item.email}, #{item.actived}, #{item.age}, #{item.orgId})
 		</foreach>
 	</insert>
+	<update id="updateUser">  
+		update user 
+		<set>
+			name = #{name},
+			pass = #{pass},
+			email = #{email},
+			actived = #{actived},
+			age = #{age},
+			org_id = #{orgId},
+		</set>
+		where id = #{id}
+	</update> 
+	<delete id="deletetUser">
+		delete from user where id = #{id}
+	</delete>
 
 	<select id="getUserById" resultMap="userMap" parameterType="java.util.UUID">
 		select
@@ -94,5 +110,10 @@
 	<update id="apiAdd1" parameterMap="apiAddMap" statementType="CALLABLE">  
 		{call api_add(#{add1}, #{add2}, #{s,jdbcType=INTEGER,mode=OUT})}
 	</update> 
-	<sql id="allField">id, name, pass, email, actived, age</sql>
+	<select id="queryUsersByOrg" resultMap="userMap">
+		select
+		<include refid="allField" />
+		FROM user
+		where org_id = #{orgId}
+	</select>
 </mapper>

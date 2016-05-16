@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.isoftstone.study.mapper.OrgMapper">
+	<resultMap type="com.isoftstone.study.domain.Organization" id="orgMap">
+		<id column="org_id" property="id" />
+		<result column="org_name" property="name" />
+		<result column="org_actived" property="actived" />
+		<association column="org_owner" property="owner"
+					 select="com.isoftstone.study.mapper.UserMapper.getUserById"></association>
+		<collection property="users" column="org_id" ofType="com.isoftstone.study.domain.User" 
+					select="com.isoftstone.study.mapper.UserMapper.queryUsersByOrg"></collection>
+	</resultMap>
+
+	<resultMap type="com.isoftstone.study.domain.Organization" id="orgMap_quick">
+		<id column="org_id" property="id" />
+		<result column="org_name" property="name" />
+		<result column="org_actived" property="actived" />
+		<association column="org_owner" property="owner" javaType="com.isoftstone.study.domain.User" 
+					 resultMap="com.isoftstone.study.mapper.UserMapper.userMap" columnPrefix="u_"></association>
+		<collection property="users" ofType="com.isoftstone.study.domain.User" 
+					resultMap="com.isoftstone.study.mapper.UserMapper.userMap" columnPrefix="us_"></collection>
+	</resultMap>
+
+	<sql id="allField">org_id, org_name, org_owner, org_actived</sql>
+
+	<select id="getOrgById" resultMap="orgMap">
+		select
+		<include refid="allField" />
+		FROM organization
+		where org_id = #{id}
+	</select>
+	<select id="queryOrgsByStatus" resultMap="orgMap">
+		select
+		<include refid="allField" />
+		FROM organization
+		where org_actived = #{actived}
+	</select>
+	<select id="queryOrgsByStatus_quick" resultMap="orgMap_quick">
+		select
+		o.<include refid="allField" />
+		,
+		u.id u_id, u.name u_name, u.pass u_pass, u.email u_email, u.actived u_actived, u.age u_age
+		,
+		us.id us_id, us.name us_name, us.pass us_pass, us.email us_email, us.actived us_actived, us.age us_age
+		FROM organization o
+		left join user u on o.org_owner = u.id
+		left join user us on o.org_id = us.org_id
+		where org_actived = #{actived}
+	</select>
+
+</mapper>

@@ -9,6 +9,7 @@ public class User {
 	private String email;
 	private Boolean actived;
 	private Integer age;
+	private String orgId;
 	
 	private String group;
 	
@@ -55,4 +56,11 @@ public class User {
 	public void setGroup(String group) {
 		this.group = group;
 	}
+	public String getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
+	
 }

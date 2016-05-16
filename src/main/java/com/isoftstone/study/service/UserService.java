@@ -5,19 +5,21 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.isoftstone.study.domain.ApiAdd;
 import com.isoftstone.study.domain.User;
 import com.isoftstone.study.mapper.UserMapper;
 
 @Service
+@Transactional(rollbackFor=Throwable.class)
 public class UserService {
 	@Autowired
 	private UserMapper userMapper;
-
-	public int insertUser(User user) {
+	public int insertUser(User user) throws RuntimeException{
 		user.setId(UUID.randomUUID());
-		return userMapper.insertUser(user);
+		int count = userMapper.insertUser(user);
+		return count;
 	}
 
 	public List<User> queryUsers(String name, String email) {
@@ -59,5 +61,17 @@ public class UserService {
 			s = -1;
 		}
 		return s;
+	}
+
+	public List<User> queryUsersByOrg(String orgId) {
+		return userMapper.queryUsersByOrg(orgId);
+	}
+
+	public int updateUser(User updUser) {
+		return userMapper.updateUser(updUser);
+	}
+
+	public int deletetUser(UUID id) {
+		return userMapper.deletetUser(id);
 	}
 }

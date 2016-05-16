@@ -71,4 +71,10 @@ public interface UserMapper {
 	public List<User> queryUsersGroupByStatus(@Param("group") int group);
 
 	public void apiAdd(ApiAdd apiAdd);
+
+	public List<User> queryUsersByOrg(@Param("orgId") String orgId);
+
+	public int updateUser(User updUser);
+
+	public int deletetUser(UUID id);
 }
