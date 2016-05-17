@@ -3,6 +3,7 @@
 <mapper namespace="com.isoftstone.study.mapper.OrgMapper">
 	<resultMap type="com.isoftstone.study.domain.Organization" id="orgMap">
 		<id column="org_id" property="id" />
+<!-- 		<result column="org_id" property="id" /> -->
 		<result column="org_name" property="name" />
 		<result column="org_actived" property="actived" />
 		<association column="org_owner" property="owner"
